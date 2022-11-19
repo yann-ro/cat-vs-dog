@@ -20,6 +20,7 @@
 
 ### Transfer learning
 > **Warning**
+> 
 > Pretrain on imagenet was not considered bcs it contain images of cats and dog so inject new data
 
 ## Avoid overfitting
