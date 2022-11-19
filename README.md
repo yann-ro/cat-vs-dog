@@ -5,20 +5,20 @@
 ## Baseline
 
 ![](figures/Resnet50%20-%20basic%20augmentations.png)
-> [!NOTE]
+> **Note**
 > accuracy on test 0.90
 
 ## Choice of feature extractor
 
-> Resnet
+### Resnet
 - easy to implement 
 - easily scalable on different size
 - compromise between accuracy and overfitting
 
-# Improve performances
+## Improve performances
 
-## Transfer learning
-> [!WARNING]
+### Transfer learning
+> **Warning**
 > Pretrain on imagenet was not considered bcs it contain images of cats and dog so inject new data
 
 ## Avoid overfitting
@@ -29,4 +29,4 @@
 ![](figures/cat%20%26%20dog%20-%20train.png)
 - select relevant with 
 
-### Other improvements chats
+## Other tracks
