@@ -6,7 +6,8 @@
 
 ![](figures/Resnet50%20-%20basic%20augmentations.png)
 > **Note**
-> accuracy on test 0.90
+> 
+> accuracy on test 0.8095
 
 ## Choice of feature extractor
 
