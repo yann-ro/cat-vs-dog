@@ -12,18 +12,22 @@ from torch.utils import data
 from sklearn.model_selection import train_test_split
 
 
-def plot_images(images, title=""):
+def plot_images(images, title="", saving_path=""):
     """_summary_
 
     Args:
         images (_type_): _description_
     """
 
-    plt.figure(figsize=(16, 24))
+    plt.figure(figsize=(24, 6))
     grid_imgs = torchvision.utils.make_grid(images)
     np_grid_imgs = grid_imgs.numpy()
     plt.imshow(np.transpose(np_grid_imgs, (1, 2, 0)))
     plt.title(title)
+
+    if saving_path:
+        plt.savefig(os.path.join(saving_path, f"figures/{title}.png"))
+    plt.show()
 
 
 class CatDogDataset(Dataset):
@@ -61,7 +65,7 @@ class CatDogDataloader:
     """_summary_"""
 
     def __init__(
-        self, img_size=224, batch_size=16, dataset_root="", num_workers=2
+        self, img_size=224, batch_size=16, dataset_root="", num_workers=2, custom_transform=None
     ) -> None:
         """_summary_"""
         self.dataset_root = dataset_root
@@ -72,7 +76,7 @@ class CatDogDataloader:
         self.means = (0, 0, 0)
         self.stds = (1, 1, 1)
 
-        self.load_dataset(self.dataset_root)
+        self.load_dataset(self.dataset_root, custom_transform)
 
     def class_to_int(self, x):
         """_summary_
@@ -85,7 +89,7 @@ class CatDogDataloader:
         """
         return 0 if "dog" in x.lower() else 1
 
-    def load_dataset(self, dataset_root, custom_transform=None):
+    def load_dataset(self, dataset_root, custom_transform):
         """_summary_
 
         Args:
@@ -95,11 +99,13 @@ class CatDogDataloader:
             train_transforms = transforms.Compose(
                 [
                     transforms.Resize((self.img_size, self.img_size)),
+                    transforms.RandomCrop(204),
                     transforms.RandomHorizontalFlip(p=0.5),
                     transforms.RandomRotation(15),
-                    transforms.RandomCrop(204),
+
+                    transforms.Resize((self.img_size, self.img_size)),
                     transforms.ToTensor(),
-                    transforms.Normalize(mean=self.means, std=self.stds),
+                    transforms.Normalize(mean=self.means, std=self.stds)
                 ]
             )
         else:
@@ -109,7 +115,7 @@ class CatDogDataloader:
             [
                 transforms.Resize((self.img_size, self.img_size)),
                 transforms.ToTensor(),
-                transforms.Normalize(mean=self.means, std=self.stds),
+                transforms.Normalize(mean=self.means, std=self.stds)
             ]
         )
 

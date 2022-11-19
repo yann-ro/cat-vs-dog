@@ -211,24 +211,27 @@ class Trainer:
         """_summary_"""
         best_val_acc = 0
         torch.cuda.empty_cache()
+        try:
+            for epoch in range(num_epochs):
+                # Training
+                print(f"Epoch: {epoch}")
+                loss, acc, _time = self.train(self.dataloader.train_iterator)
+                print(f"Train - Loss : {loss:.4f} Acc : {acc:.4f} Time: {_time:.4f}")
+                self.history["train_accuracy"].append(acc / 100)
+                self.history["train_loss"].append(loss)
 
-        for epoch in range(num_epochs):
-            self.history["epoch"].append(epoch)
+                # Validation
+                loss, acc, _time, best_val_acc = self.evaluate(
+                    self.dataloader.valid_iterator, best_val_acc=best_val_acc, mode="val"
+                )
+                print(f"Valid - Loss : {loss:.4f} Acc : {acc:.4f} Time: {_time:.4f}\n")
+                self.history["valid_accuracy"].append(acc / 100)
+                self.history["valid_loss"].append(loss)
 
-            # Training
-            print(f"Epoch: {epoch}")
-            loss, acc, _time = self.train(self.dataloader.train_iterator)
-            print(f"Train - Loss : {loss:.4f} Acc : {acc:.4f} Time: {_time:.4f}")
-            self.history["train_accuracy"].append(acc / 100)
-            self.history["train_loss"].append(loss)
+                self.history["epoch"].append(epoch)
 
-            # Validation
-            loss, acc, _time, best_val_acc = self.evaluate(
-                self.dataloader.valid_iterator, best_val_acc=best_val_acc, mode="val"
-            )
-            print(f"Valid - Loss : {loss:.4f} Acc : {acc:.4f} Time: {_time:.4f}\n")
-            self.history["valid_accuracy"].append(acc / 100)
-            self.history["valid_loss"].append(loss)
+        except KeyboardInterrupt:
+            pass
 
         # Test
         loss, acc, _time, best_val_acc = self.evaluate(
@@ -249,11 +252,13 @@ class Trainer:
 
     def plot_history(self, title="", saving_path=""):
         """_summary_"""
+        n_epochs = len(self.history["epoch"])
+
         plt.figure(figsize=(24, 6))
         plt.subplot(1, 2, 1)
-        plt.plot(self.history["epoch"], self.history["train_accuracy"], label="train")
+        plt.plot(self.history["epoch"], self.history["train_accuracy"][:n_epochs], label="train")
         plt.plot(
-            self.history["epoch"], self.history["valid_accuracy"], label="validation"
+            self.history["epoch"], self.history["valid_accuracy"][:n_epochs], label="validation"
         )
         plt.ylim(0.5, 1.1)
         plt.grid()
@@ -261,14 +266,15 @@ class Trainer:
         plt.title("Accuracy")
 
         plt.subplot(1, 2, 2)
-        plt.plot(self.history["epoch"], self.history["train_loss"], label="train")
-        plt.plot(self.history["epoch"], self.history["valid_loss"], label="validation")
+        plt.plot(self.history["epoch"], self.history["train_loss"][:n_epochs], label="train")
+        plt.plot(self.history["epoch"], self.history["valid_loss"][:n_epochs], label="validation")
         plt.grid()
         plt.legend()
         plt.title("Loss")
 
         plt.suptitle(f"{title}\nTest accuracy {self.test_accuracy:.4f}")
-        plt.show()
 
         if saving_path:
             plt.savefig(os.path.join(saving_path, f"figures/{title}.png"))
+        plt.show()
+        
