@@ -67,6 +67,7 @@ class CatDogDataloader:
     def __init__(
         self,
         img_size=224,
+        valid_size=0.1,
         batch_size=16,
         dataset_root="",
         num_workers=2,
@@ -75,6 +76,7 @@ class CatDogDataloader:
         """_summary_"""
         self.dataset_root = dataset_root
         self.img_size = img_size
+        self.valid_size = valid_size
         self.batch_size = batch_size
         self.num_workers = num_workers
 
@@ -103,11 +105,10 @@ class CatDogDataloader:
         if not isinstance(custom_transform, transforms.Compose):
             train_transforms = transforms.Compose(
                 [
-                    transforms.Resize((self.img_size, self.img_size)),
-                    transforms.RandomCrop(204),
+                    transforms.Resize((int(self.img_size*1.5), int(self.img_size*1.5))),
                     transforms.RandomHorizontalFlip(p=0.5),
                     transforms.RandomRotation(15),
-                    transforms.Resize((self.img_size, self.img_size)),
+                    transforms.RandomCrop(self.img_size),
                     transforms.ToTensor(),
                     transforms.Normalize(mean=self.means, std=self.stds),
                 ]
@@ -129,7 +130,7 @@ class CatDogDataloader:
         train_images = os.listdir(os.path.abspath(train_path))
         test_images = os.listdir(os.path.abspath(test_path))
 
-        train_data, valid_data = train_test_split(train_images, test_size=0.1)
+        train_data, valid_data = train_test_split(train_images, test_size=self.valid_size)
 
         train_dataset = CatDogDataset(
             train_data,
