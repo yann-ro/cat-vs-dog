@@ -51,8 +51,8 @@ class CatDogDataset(Dataset):
         img = Image.open(os.path.join(self.dir, image_name))
 
         label = self.class_to_int(image_name.split(".")[0])
-        label = torch.tensor(label, dtype=torch.long)
-    
+        label = torch.tensor(label, dtype=torch.float32)
+
         img = self.transforms(img)
 
         return img, label
@@ -65,7 +65,12 @@ class CatDogDataloader:
     """_summary_"""
 
     def __init__(
-        self, img_size=224, batch_size=16, dataset_root="", num_workers=2, custom_transform=None
+        self,
+        img_size=224,
+        batch_size=16,
+        dataset_root="",
+        num_workers=2,
+        custom_transform=None,
     ) -> None:
         """_summary_"""
         self.dataset_root = dataset_root
@@ -102,10 +107,9 @@ class CatDogDataloader:
                     transforms.RandomCrop(204),
                     transforms.RandomHorizontalFlip(p=0.5),
                     transforms.RandomRotation(15),
-
                     transforms.Resize((self.img_size, self.img_size)),
                     transforms.ToTensor(),
-                    transforms.Normalize(mean=self.means, std=self.stds)
+                    transforms.Normalize(mean=self.means, std=self.stds),
                 ]
             )
         else:
@@ -115,7 +119,7 @@ class CatDogDataloader:
             [
                 transforms.Resize((self.img_size, self.img_size)),
                 transforms.ToTensor(),
-                transforms.Normalize(mean=self.means, std=self.stds)
+                transforms.Normalize(mean=self.means, std=self.stds),
             ]
         )
 

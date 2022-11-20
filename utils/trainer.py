@@ -6,8 +6,10 @@ import numpy as np
 import torch
 from torch import nn, optim
 from torch.utils.data import DataLoader
+from torch_lr_finder import LRFinder
 from tqdm.notebook import tqdm
 import matplotlib.pyplot as plt
+import copy
 
 
 class Trainer:
@@ -21,7 +23,7 @@ class Trainer:
         device="cpu",
         criterion=nn.BCELoss(),
         optimizer=optim.Adam,
-        scheduler=lambda x: optim.lr_scheduler.StepLR(x, step_size=5, gamma=.5),
+        scheduler=lambda x: optim.lr_scheduler.StepLR(x, step_size=5, gamma=0.5),
         root="",
     ):
         """_summary_
@@ -47,6 +49,9 @@ class Trainer:
         self.net.to(self.device)
 
         self.optimizer = optimizer(self.net.parameters(), lr=self.lr)
+        self.optimizer_copy = copy.deepcopy(
+            optimizer(self.net.parameters(), lr=self.lr)
+        )
         self.lr_scheduler = scheduler(self.optimizer)
 
         # history
@@ -113,9 +118,6 @@ class Trainer:
             # Loading images and labels to device
             images = images.to(self.device)
             labels = labels.to(self.device)
-            labels = labels.reshape(
-                (labels.shape[0], 1)
-            )  # [N, 1] - to match with preds shape
 
             # Reseting Gradients
             self.optimizer.zero_grad()
@@ -171,7 +173,6 @@ class Trainer:
             # Loading images and labels to device
             images = images.to(self.device)
             labels = labels.to(self.device)
-            labels = labels.reshape((labels.shape[0], 1))
 
             # forward
             preds = self.net(images)
@@ -211,25 +212,27 @@ class Trainer:
         torch.cuda.empty_cache()
         try:
             for _ in range(num_epochs):
-                
+
                 print(f"Epoch: {self.current_epoch}")
-                
+
                 # train
                 loss, acc, _time = self.train(self.dataloader.train_iterator)
-                
+
                 print(f"Train - Loss : {loss:.4f} Acc : {acc:.4f} Time: {_time:.4f}")
                 self.history["train_accuracy"].append(acc / 100)
                 self.history["train_loss"].append(loss)
 
                 # eval
                 loss, acc, _time, best_val_acc = self.evaluate(
-                    self.dataloader.valid_iterator, best_val_acc=best_val_acc, mode="val"
+                    self.dataloader.valid_iterator,
+                    best_val_acc=best_val_acc,
+                    mode="val",
                 )
-                
+
                 print(f"Valid - Loss : {loss:.4f} Acc : {acc:.4f} Time: {_time:.4f}\n")
                 self.history["valid_accuracy"].append(acc / 100)
                 self.history["valid_loss"].append(loss)
-                
+
                 self.current_epoch += 1
                 self.history["epoch"].append(self.current_epoch)
 
@@ -259,9 +262,15 @@ class Trainer:
 
         plt.figure(figsize=(24, 6))
         plt.subplot(1, 2, 1)
-        plt.plot(self.history["epoch"], self.history["train_accuracy"][:n_epochs], label="train")
         plt.plot(
-            self.history["epoch"], self.history["valid_accuracy"][:n_epochs], label="validation"
+            self.history["epoch"],
+            self.history["train_accuracy"][:n_epochs],
+            label="train",
+        )
+        plt.plot(
+            self.history["epoch"],
+            self.history["valid_accuracy"][:n_epochs],
+            label="validation",
         )
         plt.ylim(0.5, 1.1)
         plt.grid()
@@ -269,8 +278,14 @@ class Trainer:
         plt.title("Accuracy")
 
         plt.subplot(1, 2, 2)
-        plt.plot(self.history["epoch"], self.history["train_loss"][:n_epochs], label="train")
-        plt.plot(self.history["epoch"], self.history["valid_loss"][:n_epochs], label="validation")
+        plt.plot(
+            self.history["epoch"], self.history["train_loss"][:n_epochs], label="train"
+        )
+        plt.plot(
+            self.history["epoch"],
+            self.history["valid_loss"][:n_epochs],
+            label="validation",
+        )
         plt.grid()
         plt.legend()
         plt.title("Loss")
@@ -280,4 +295,26 @@ class Trainer:
         if saving_path:
             plt.savefig(os.path.join(saving_path, f"figures/{title}.png"))
         plt.show()
-        
+
+    def find_best_lr(self, end_lr=100, num_iter=100, plot=True, saving_path=""):
+        """_summary_
+
+        Args:
+            plot (bool, optional): _description_. Defaults to True.
+        """
+        # not clean but needed bcs scheduler is linked to optimizer
+        optimizer = copy.deepcopy(self.optimizer_copy)
+
+        lr_finder = LRFinder(self.net, optimizer, self.criterion, device=self.device)
+        lr_finder.range_test(
+            self.dataloader.train_iterator,
+            end_lr=end_lr,
+            num_iter=num_iter,
+            step_mode="exp",
+        )
+
+        if plot:
+            fig, ax = plt.subplots()
+            lr_finder.plot(ax=ax)
+            if saving_path:
+                fig.savefig(f"{saving_path}/figures/find_lr.png")

@@ -170,7 +170,7 @@ class Bottleneck(nn.Module):
         if norm_layer is None:
             norm_layer = nn.BatchNorm2d
         width = int(planes * (base_width / 64.0)) * groups
-        
+
         self.conv1 = conv1x1(in_planes, width)
         self.bn1 = norm_layer(width)
         self.conv2 = conv3x3(width, width, stride, groups, dilation)
@@ -231,7 +231,7 @@ class ResNet(nn.Module):
         norm_layer: Optional[Callable[..., nn.Module]] = None,
     ) -> None:
         super().__init__()
-        
+
         if norm_layer is None:
             norm_layer = nn.BatchNorm2d
         self._norm_layer = norm_layer
@@ -371,7 +371,6 @@ class ResNet(nn.Module):
 
         return x
 
-
     def summary(self, device, input_dim=(1, 28, 28)):
         """_summary_
 
@@ -388,6 +387,7 @@ class ResNet18(ResNet):
     Args:
         ResNet (_type_): _description_
     """
+
     def __init__(
         self,
         num_classes: int = 1000,
@@ -416,6 +416,7 @@ class ResNet34(ResNet):
     Args:
         ResNet (_type_): _description_
     """
+
     def __init__(
         self,
         num_classes: int = 1000,

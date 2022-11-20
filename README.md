@@ -19,13 +19,15 @@
 ### Resnet
 - easy to implement 
 - easily scalable on different size
-- compromise between accuracy and overfitting
 
 ## Learning rate and optimizer
 - Optimizer: Adam
 > create a variable learning rate for all layers between 0 and defined learning rate.
 
-- 
+- Select the most intersting lr : 
+    - [sgugger blog](https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html#how-do-you-find-a-good-learning-rate)
+
+    ![](figures/find_lr.png)
 
 ## Image size
 
@@ -53,3 +55,6 @@ Constraints:
 > Test accuracy: 0.94
 
 ## Other tracks
+### Self-supervised learning
+- pretrain model using a pretext task: the more relevant task should be predicting relative position of image patches ([ref.](https://atcold.github.io/pytorch-Deep-Learning/en/week10/10-1/))
+    - easy to implement and easy to understand
