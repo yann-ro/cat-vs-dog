@@ -144,4 +144,4 @@ Another way to build a more robust model on prediction could be to ensemble dist
 
 ### An analysis study on errors
 
-Taking the time to visually analyze errors made by the model, it could give to identify areas for improvement to potentially provide a more suitable solution (specific augmentation, etc.).
+Taking the time to visually analyze the errors made by the model, this could help identify areas for improvement to possibly provide a more suitable solution (specific increase, etc.).
