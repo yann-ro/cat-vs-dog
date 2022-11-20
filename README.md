@@ -114,7 +114,7 @@ This consist to keep small values to avoid overfitting. It uses coeff $\alpha$ (
 
 $\alpha$ = 1e-4 and 1e-5 have been tried with the same result.
 
-An idea could be to continue to decrease the value or increase the model size to a Resnet34 or 50.
+An idea could be to continue to decrease the value or increase the model size to a Resnet34 or Resnet50.
 
 ![](figures/Resnet18%20-%20advanced%20augmentations%20%23weight-decay.png)
 > **Note**</br>
@@ -144,4 +144,4 @@ Another way to build a more robust model on prediction could be to ensemble dist
 
 ### An analysis study on errors
 
-Taking the time to visually analyze the errors made by the model, this could help identify areas for improvement to possibly provide a more suitable solution (specific increase, etc.).
+Taking the time to visually analyze the errors made by the model, this could help identify areas for improvement to possibly provide a more suitable solution (specific augmentation, etc.).
