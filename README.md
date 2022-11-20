@@ -45,9 +45,9 @@ In the introduction, we see that with a Resnet50 we overfit too much so the choi
 - select the most interesting LR : 
     - According to [sgugger blog](https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html#how-do-you-find-a-good-learning-rate) we can use a [fast.ai]()'s framework to compute an approximation of the best choice for learning rate. It depends on the model and the dataset. This curve is not always stable so we need to use it carefully. The idea is to take the LR where the $\frac{dLoss}{dLr}$ is negative with the steepest slope for a faster hypothetical convergence.
 
-    ![](figures/find_lr.png)
-    > **Note**</br>
-    > Suggested lr: 1.67e-07
+![](figures/find_lr.png)
+> **Note**</br>
+> Suggested lr: 1.67e-07
 
 #### Optimizer
 - Adam
