@@ -51,8 +51,8 @@ class CatDogDataset(Dataset):
         img = Image.open(os.path.join(self.dir, image_name))
 
         label = self.class_to_int(image_name.split(".")[0])
-        label = torch.tensor(label, dtype=torch.float32)
-
+        label = torch.tensor(label, dtype=torch.long)
+    
         img = self.transforms(img)
 
         return img, label

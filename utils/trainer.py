@@ -17,10 +17,11 @@ class Trainer:
         self,
         model,
         dataloader,
-        lr=0.0001,
+        lr=1e-4,
         device="cpu",
         criterion=nn.BCELoss(),
         optimizer=optim.Adam,
+        scheduler=lambda x: optim.lr_scheduler.StepLR(x, step_size=5, gamma=.5),
         root="",
     ):
         """_summary_
@@ -34,6 +35,7 @@ class Trainer:
         self.device = device
         self.root = os.path.abspath(root)
         self.dataloader = dataloader
+        self.current_epoch = 0
 
         # hyperparameters
         self.lr = lr
@@ -45,9 +47,7 @@ class Trainer:
         self.net.to(self.device)
 
         self.optimizer = optimizer(self.net.parameters(), lr=self.lr)
-        self.lr_scheduler = torch.optim.lr_scheduler.StepLR(
-            self.optimizer, step_size=5, gamma=0.5
-        )
+        self.lr_scheduler = scheduler(self.optimizer)
 
         # history
         self.history = {
@@ -160,8 +160,6 @@ class Trainer:
         Returns:
             _type_: _description_
         """
-        # gc.collect()
-        # torch.cuda.empty_cache()
 
         # Local Parameters
         epoch_loss = []
@@ -212,28 +210,33 @@ class Trainer:
         best_val_acc = 0
         torch.cuda.empty_cache()
         try:
-            for epoch in range(num_epochs):
-                # Training
-                print(f"Epoch: {epoch}")
+            for _ in range(num_epochs):
+                
+                print(f"Epoch: {self.current_epoch}")
+                
+                # train
                 loss, acc, _time = self.train(self.dataloader.train_iterator)
+                
                 print(f"Train - Loss : {loss:.4f} Acc : {acc:.4f} Time: {_time:.4f}")
                 self.history["train_accuracy"].append(acc / 100)
                 self.history["train_loss"].append(loss)
 
-                # Validation
+                # eval
                 loss, acc, _time, best_val_acc = self.evaluate(
                     self.dataloader.valid_iterator, best_val_acc=best_val_acc, mode="val"
                 )
+                
                 print(f"Valid - Loss : {loss:.4f} Acc : {acc:.4f} Time: {_time:.4f}\n")
                 self.history["valid_accuracy"].append(acc / 100)
                 self.history["valid_loss"].append(loss)
-
-                self.history["epoch"].append(epoch)
+                
+                self.current_epoch += 1
+                self.history["epoch"].append(self.current_epoch)
 
         except KeyboardInterrupt:
             pass
 
-        # Test
+        # test
         loss, acc, _time, best_val_acc = self.evaluate(
             self.dataloader.test_iterator, best_val_acc=best_val_acc
         )

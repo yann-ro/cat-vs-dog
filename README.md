@@ -10,7 +10,7 @@
 ### Resnet50 without any experiments
 ![](figures/Resnet50%20-%20basic%20augmentations.png)
 > **Note**</br>
-> Test accuracy: 0.8095
+> Test accuracy: 0.81
 
 # Improve performances vs avoid overfitting
 
@@ -22,7 +22,10 @@
 - compromise between accuracy and overfitting
 
 ## Learning rate and optimizer
+- Optimizer: Adam
+> create a variable learning rate for all layers between 0 and defined learning rate.
 
+- 
 
 ## Image size
 
@@ -47,6 +50,6 @@ Constraints:
 
 ![](figures/Resnet18%20-%20advanced%20augmentations.png)
 > **Note**</br>
-> Test accuracy: 0.8660
+> Test accuracy: 0.94
 
 ## Other tracks
