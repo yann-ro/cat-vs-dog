@@ -28,6 +28,8 @@
     - [sgugger blog](https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html#how-do-you-find-a-good-learning-rate)
 
     ![](figures/find_lr.png)
+    > **Note**</br>
+    > Suggested LR: 1.67E-07
 
 ## Image size
 
