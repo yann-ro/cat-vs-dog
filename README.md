@@ -121,7 +121,7 @@ An idea could be to continue to decrease the value or increase the model size to
 > Test accuracy: 0.86
 
 
-# Other tracks 
+# Other possible improvements (not done during the test)
 
 ### Self-supervised learning
 
