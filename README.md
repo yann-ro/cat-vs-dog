@@ -110,11 +110,9 @@ So with these different improvements, the accuracy on the test achieves 0.94 (+1
 
 ## Weight decay
 
-This consist to keep small values to avoid overfitting. It uses coeff $\alpha$ (another hyperparameter) as a regularization parameter. As we can see in the graph below, with the same configurations as above, it reduces overfitting because we have the same perf in train and in test but we can archive the same perf.
+This consist to keep small values to avoid overfitting. It uses coeff $\alpha$ (another hyperparameter) as a regularization parameter. As we can see in the graph below, with the same configurations as above, we reduce overfitting (same performances in train and in validation) but we can not archive the same level of performance. $\alpha$ = 1e-4 and 1e-5 have been tried with the same results.
 
-$\alpha$ = 1e-4 and 1e-5 have been tried with the same result.
-
-An idea could be to continue to decrease the value or increase the model size to a Resnet34 or Resnet50.
+An idea could be to continue to decrease the value or increase the model size to a Resnet34 or Resnet50 to find the best compromise and maybe increase test accuracy.
 
 ![](figures/Resnet18%20-%20advanced%20augmentations%20%23weight-decay.png)
 > **Note**</br>
