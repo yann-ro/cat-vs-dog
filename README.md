@@ -142,6 +142,6 @@ We use augmentation to train the model but it can also be used for prediction wi
 
 Another way to build a more robust model on prediction could be to ensemble distinct models we different training conditions and also concatenate the outputs.
 
-### An analysis study on errors
+### An analytical study
 
-Taking the time to visually analyze the errors made by the model, this could help identify areas for improvement to possibly provide a more suitable solution (specific augmentation, etc.).
+By taking the time to visually analyze the errors made by the model, we can identify the points to be improved to eventually propose a more adapted solution (specific augmentation, etc.).
